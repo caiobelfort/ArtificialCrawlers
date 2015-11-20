@@ -83,8 +83,6 @@ class ACEnvironmentTest(unittest.TestCase):
 
 
 
-
-
 class ACAgentTest(unittest.TestCase):
     def setUp(self):
         pass
@@ -113,10 +111,6 @@ class ACAgentTest(unittest.TestCase):
 
         self.assertEqual(a.energy_, 30, 'Agent have more energy than possible for it')
 
-
-
-
-
     def test_crawler_update_with_battle_win_and_kill(self):
         arr = np.arange(4).reshape(2, 2)
         map = np.array([
@@ -133,7 +127,7 @@ class ACAgentTest(unittest.TestCase):
 
         self.assertTrue(env.population[1, 1] is ag1)
         self.assertEqual((1, 1), ag1.position_)
-        self.assertTrue(ag2.energy_ == 0)
+        self.assertTrue(env.population[ag2.position_] != ag2)
 
     def test_crawler_update_with_battle_lost_and_die(self):
         arr = np.arange(4).reshape(2, 2)
@@ -151,8 +145,7 @@ class ACAgentTest(unittest.TestCase):
 
         self.assertTrue(env.population[1, 1] is ag2)
         self.assertEqual((1, 1), ag2.position_)
-        self.assertTrue(ag1.energy_ == 0)
-
+        self.assertTrue(env.population[ag1.position_] != ag1)
 
     def test_can_battle_another_agent_and_win(self):
         arr = np.arange(4).reshape(2, 2)
@@ -167,7 +160,7 @@ class ACAgentTest(unittest.TestCase):
         ag2 = env.population[1, 1]  # The looser
 
         self.assertTrue(ag1.attack(ag2), "The agent lose the battle")
-        self.assertEqual(ag2.energy_, 0, "The loser agent ag2 is alive!!!!KILL IT!!!!!!!!!!!!")
+        self.assertTrue(env.population[ag2.position_] != ag2, "The loser agent ag2 is alive!!!!KILL IT!!!!!!!!!!!!")
 
     def test_can_battle_another_agent_and_lost(self):
         arr = np.arange(4).reshape(2, 2)
@@ -185,7 +178,7 @@ class ACAgentTest(unittest.TestCase):
         ag2.energy_ = 3
 
         self.assertFalse(ag1.attack(ag2), "The agent won the battle")
-        self.assertEqual(ag1.energy_, 0, "The loser agent ag1 is alive!!!!KILL IT!!!!!!!!!!!!")
+        self.assertTrue(env.population[ag1.position_] != ag1, "The loser agent ag1 is alive!!!!KILL IT!!!!!!!!!!!!")
 
     def test_can_do_perception(self):
         arr = np.array([
@@ -300,7 +293,6 @@ class ACAgentTest(unittest.TestCase):
         crawler.die()
 
         self.assertFalse(env.population[0, 0], "Agent still have reference in environment!")
-        self.assertEqual(crawler.energy_, 0, "Agent still have energy")
 
     def test_perception_do_not_return_self_position(self):
         arr = np.arange(4).reshape(2, 2)

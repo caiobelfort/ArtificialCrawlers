@@ -127,7 +127,6 @@ class ACAgent:
             self.energy_ = self.max_energy_
 
     def die(self):
-        self.energy_ = 0
         self.environment_.population[self.position_] = False
 
     def attack(self, ag):
@@ -136,6 +135,13 @@ class ACAgent:
             return True
         self.die()
         return False
+
+    def to_array(self):
+        """
+        Transforms the crawler object in a numpy array with the x, y , energy values
+        :return: ndarray
+        """
+        return np.array([self.position_[0], self.position_[1], self.energy_])
 
 
 class ACEnvironment:
@@ -201,7 +207,7 @@ class ACEnvironment:
         return energy_map
 
 
-class ACSimulation():
+class ACSimulation:
     def __init__(self,
                  environment,
                  initialization_map,
@@ -221,6 +227,7 @@ class ACSimulation():
         self.iterations_ = 0
         self.stop_condition_ = stop_condition
         self.equilibrium_ = False
+        self.observers = []
 
     def run(self):
 
@@ -233,8 +240,44 @@ class ACSimulation():
             self.update()
             self.iterations_ += 1
 
-    def update(self):
+    def register_observer(self, observer):
+        """
+        Add a new observer to the simulation
+        :param observer: An object who receives simulation updates
+        :return: None
+        """
+        self.observers.append(observer)
 
+    def notify_all(self):
+        """
+        Notify all observer about the current state
+        :return:
+        """
+        current_state = self.get_state()
+        for observer in self.observers:
+            observer.notify(current_state)
+
+
+    def get_state(self):
+        """
+        Get the current state of the simulation
+        :return:
+        """
+        live_crawlers = []
+        dead_crawlers = []
+
+        for crawler in self.population_:
+            live_crawlers.append(crawler.to_array())
+
+        for crawler in self.graveyard:
+            dead_crawlers.append(crawler.to_array())
+
+        state = (self.iterations_, self.equilibrium_, live_crawlers, dead_crawlers)
+
+        return state
+
+
+    def update(self):
         flag = False
 
         sz = len(self.population_)
