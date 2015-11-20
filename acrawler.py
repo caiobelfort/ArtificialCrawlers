@@ -108,7 +108,6 @@ class ACAgent:
             return True
         return False
 
-
     def move_to(self, pos):
 
         if pos == self.position_:
@@ -138,7 +137,8 @@ class ACAgent:
         self.die()
         return False
 
-class ACEnvironment():
+
+class ACEnvironment:
     """
     This class represents the crawlers model ambient
     """
@@ -215,6 +215,7 @@ class ACSimulation():
                                                                                                    max_energy,
                                                                                                    absorption_rate])
         self.population_ = self.environment_.get_population_references()
+        self.graveyard = []  # Keeps the position and energy of dead crawlers
 
         self.max_iterations_ = iterations
         self.iterations_ = 0
@@ -244,7 +245,8 @@ class ACSimulation():
 
             if self.population_[k].energy_ == 0 or \
                     not (self.environment_.population[self.population_[k].position_] is self.population_[k]):
-                # Without energy or lost his reference in environment
+                # Without energy or lost his reference in environment the crawler is dead
+                self.graveyard.append(self.population_[k])
                 del self.population_[k]
                 sz -= 1
             else:
