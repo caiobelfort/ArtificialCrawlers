@@ -3,12 +3,12 @@ __author__ = 'caiob'
 import numpy as np
 
 
-class ACAgent():
+class ACAgent:
     def __init__(self, position, environment, energy=5, max_energy=100, absorption_rate=0.1):
         """
         Create a crawler
         :param position: tuple (x, y)
-        :param environement: ACEnvironment
+        :param environment: ACEnvironment
         """
         self.position_ = position
         self.environment_ = environment
@@ -17,8 +17,6 @@ class ACAgent():
         self.max_energy_ = max_energy
         self.environment_.population[self.position_] = self
         self.environment_.footprints[self.position_] = True
-
-
 
     def get_neighborhood_positions(self):
         """
@@ -43,37 +41,39 @@ class ACAgent():
 
     def perception(self):
         """
-        The crawler perceives his environment and select the best positions it can move
+        The crawler perceives his neighbor environment and look for best cell to move.
+        :return:  True if the crawler moves, false otherwise
         """
+        neighborhood_positions = self.get_neighborhood_positions()
 
-        neighborhood_pos = self.get_neighborhood_positions()
+        auxiliary_array = []    # Used to keep the values in the neighborhood
 
-        # Get the mapped values
-        arr = []
-        for pos in neighborhood_pos:
-            arr.append(self.environment_.values[pos])
-        arr = np.array(arr)
+        # Get mapped values
+        for pos in neighborhood_positions:
+            auxiliary_array.append(self.environment_.values[pos])
+        auxiliary_array = np.array(auxiliary_array)
 
-        best_value = arr.max()  # Get the higher value in the neighborhood
-        best_positions = []
+        best_value = auxiliary_array.max()  # Get the higher value in the neighborhood
+        best_positions = []     # Used to keep the best position(s)
 
+        # If the actual position is better the all neighborhood, the crawler do nothing.
+        # We only include positions which the value (fitness) is better than the actual.
         if best_value > self.environment_.values[self.position_]:
-            bx, = np.where(arr == best_value)  # Get the position where the value is equal the best
+            bx, = np.where(auxiliary_array == best_value)  # Get the position where the value is equal the best
             for i in bx:
-                best_positions.append(neighborhood_pos[i])
+                best_positions.append(neighborhood_positions[i])
 
         return best_positions
 
     def update(self):
         move_choices = self.perception()
-        last_position = self.position_
+        n_choices = len(move_choices)
 
-        sz = len(move_choices)
-
-        if sz >= 1:
-            follow_moves = []
-            battle_moves = []
-            explorer_moves = []
+        # We only update the crawler if we have a choice of movement, otherwise the crawler will stay in original place.
+        if n_choices >= 1:
+            follow_moves = []       # Choices where the crawler follow the steps of another crawler.
+            battle_moves = []       # Choices where the crawler need fight against other crawler for the new position.
+            explorer_moves = []     # Choices where the crawler go to a position where no one was.
 
             # A crawler always prefers move to a free cell, so we separate the free cells from battle cells
             for choice in move_choices:
@@ -87,26 +87,25 @@ class ACAgent():
                 else:
                     explorer_moves.append(choice)
 
-            if battle_moves:
+            # Always try to move to a place where other crawler was in the pas, and this place is free.
+            if follow_moves:
+                self.move_to(follow_moves[0])
+                self.absorb()
+
+            # If exist a place where no other crawler was in the past, move to it
+            elif explorer_moves:
+                # Here is battle, for now just move
+                self.move_to(explorer_moves[0])
+                self.absorb()
+
+            # There's only one choice, fight against other crawler, so attack that bastard!!!
+            else:
                 enemy = self.environment_.population[battle_moves[0]]
                 if self.attack(enemy):  # Attack, if win, move
                     self.move_to(battle_moves[0])
                     self.absorb()
 
-            elif follow_moves:
-                self.move_to(follow_moves[0])
-                self.absorb()
-            else:
-                # Here is battle, for now just move
-                self.move_to(explorer_moves[0])
-                self.absorb()
-
-            # A movement was done, now absorb energy from new cell
-
-            # Return the new position
             return True
-
-        # No better neighbor
         return False
 
 

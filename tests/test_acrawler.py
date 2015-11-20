@@ -1,11 +1,8 @@
-__author__ = 'caiob'
-
 import unittest
-
 import numpy as np
 from skimage.data import camera
+from acrawler import ACEnvironment, ACAgent, ACSimulation
 
-from agent_models.acrawler import ACEnvironment, ACAgent, ACSimulation
 
 class ACEnvironmentTest(unittest.TestCase):
     def setUp(self):
