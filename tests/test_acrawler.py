@@ -187,8 +187,6 @@ class ACAgentTest(unittest.TestCase):
         self.assertFalse(ag1.attack(ag2), "The agent won the battle")
         self.assertEqual(ag1.energy_, 0, "The loser agent ag1 is alive!!!!KILL IT!!!!!!!!!!!!")
 
-
-
     def test_can_do_perception(self):
         arr = np.array([
             [0, 1, 1, 2, 1],
@@ -224,7 +222,6 @@ class ACAgentTest(unittest.TestCase):
             np.array_equal(a4.perception(), [(2, 3)]),
             "A4 perception is wrong"
         )
-
 
     def test_can_get_neighborhood_with_boundary_check(self):
         arr = np.array([
@@ -337,7 +334,7 @@ class ACAgentTest(unittest.TestCase):
             [2, 2, 4, 4, 5],
             [0, 3, 4, 5, 0],
             [2, 1, 3, 6, 6],
-            [10, 9, 8, 8, 8]
+            [10, 9, 8, 8, 7]
         ])
 
         arr2_init = np.array([
@@ -358,7 +355,7 @@ class ACAgentTest(unittest.TestCase):
 
         expected_a1_positions = [(1, 0), (2, 1), (1, 2), (2, 3), (3, 3), (4, 2), (4, 1), (4, 0)]
         expected_a2_positions = [(1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4)]
-        expected_a3_positions = [(1, 0), (2, 1), (1, 2), (2, 3), (3, 3), (4, 2), (4, 1), (4, 0)]
+        expected_a3_positions = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 3), (4, 3), (4, 3), (4, 3)]
         expected_a4_positions = [(1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4), (1, 4)]
 
         a1_positions = []
