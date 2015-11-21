@@ -257,7 +257,6 @@ class ACSimulation:
         for observer in self.observers:
             observer.notify(current_state)
 
-
     def get_state(self):
         """
         Get the current state of the simulation
@@ -272,10 +271,9 @@ class ACSimulation:
         for crawler in self.graveyard:
             dead_crawlers.append(crawler.to_array())
 
-        state = (self.iterations_, self.equilibrium_, live_crawlers, dead_crawlers)
+        state = {'iter': self.iterations_, 'equilibrium': self.equilibrium_, 'live': live_crawlers, 'dead': dead_crawlers}
 
         return state
-
 
     def update(self):
         flag = False
@@ -296,3 +294,28 @@ class ACSimulation:
                 k += 1
 
         self.equilibrium_ = not flag
+        self.notify_all()
+
+
+class Observer:
+    """
+    Base class for simulation observers
+    """
+    def notify(self, state):
+        raise NotImplementedError
+
+
+class FinalStateObserver(Observer):
+    """
+    Save the final state of the simulation
+    """
+
+    def notify(self, state):
+        if state['equilibrium']:
+            live = np.ones(state['live'].shape[0], dtype=int)
+            dead = np.ones(state['dead'].shape[0], dtype=int)
+
+            live_or_dead = np.concatenate((live, dead))
+            crawlers = np.vstack((state['live'], state['dead']))
+            result = np.hstack((crawlers, live_or_dead))
+
