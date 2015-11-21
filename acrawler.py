@@ -4,7 +4,7 @@ import numpy as np
 
 
 class ACAgent:
-    def __init__(self, position, environment, energy=5, max_energy=100, absorption_rate=0.1):
+    def __init__(self, position, environment, energy=5, max_energy=100, absorption_rate=0.1, move_type='peak'):
         """
         Create a crawler
         :param position: tuple (x, y)
@@ -17,6 +17,7 @@ class ACAgent:
         self.max_energy_ = max_energy
         self.environment_.population[self.position_] = self
         self.environment_.footprints[self.position_] = True
+        self.move_type = move_type
 
     def get_neighborhood_positions(self):
         """
@@ -53,7 +54,12 @@ class ACAgent:
             auxiliary_array.append(self.environment_.values[pos])
         auxiliary_array = np.array(auxiliary_array)
 
-        best_value = auxiliary_array.max()  # Get the higher value in the neighborhood
+        best_value = None
+        if self.move_type == 'peak':
+            best_value = auxiliary_array.max()  # Get the higher value in the neighborhood
+        elif self.move_type == 'valley':
+            best_value = auxiliary_array.min()  # Get the lower value in the neighborhood
+
         best_positions = []     # Used to keep the best position(s)
 
         # If the actual position is better the all neighborhood, the crawler do nothing.
