@@ -227,8 +227,7 @@ class ACSimulation:
 
         self.environment_ = ACEnvironment(environment, population_mask=initialization_map, params=[initial_energy,
                                                                                                    max_energy,
-                                                                                                   absorption_rate,
-                                                                                                   move_type])
+                                                                                                   absorption_rate,                                                                                          move_type])
         self.population_ = self.environment_.get_population_references()
         self.graveyard = []  # Keeps the position and energy of dead crawlers
 
@@ -319,6 +318,9 @@ class FinalStateObserver(Observer):
     Save the final state of the simulation
     """
 
+    def __init__(self, filename):
+        self.filename = filename
+
     def notify(self, state):
         if state['equilibrium']:
             live = np.ones(state['live'].shape[0], dtype=int)
@@ -327,4 +329,4 @@ class FinalStateObserver(Observer):
             live_or_dead = np.concatenate((live, dead))
             crawlers = np.vstack((state['live'], state['dead']))
             result = np.hstack((crawlers, live_or_dead))
-
+            np.savetxt(self.filename, result)
