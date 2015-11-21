@@ -174,7 +174,8 @@ class ACEnvironment:
             x, y = np.where(population_mask)
             for position in zip(x, y):
                 if len(params) == 3:
-                    ACAgent(position, self, energy=params[0], max_energy=params[1], absorption_rate=params[2])
+                    ACAgent(position, self, energy=params[0], max_energy=params[1], absorption_rate=params[2],
+                            move_type=params[3])
                 else:
                     ACAgent(position, self)
 
@@ -221,11 +222,13 @@ class ACSimulation:
                  max_energy=100,
                  absorption_rate=0.1,
                  iterations=1000,
-                 stop_condition=''):
+                 stop_condition='',
+                 move_type='peak'):
 
         self.environment_ = ACEnvironment(environment, population_mask=initialization_map, params=[initial_energy,
                                                                                                    max_energy,
-                                                                                                   absorption_rate])
+                                                                                                   absorption_rate,
+                                                                                                   move_type])
         self.population_ = self.environment_.get_population_references()
         self.graveyard = []  # Keeps the position and energy of dead crawlers
 
