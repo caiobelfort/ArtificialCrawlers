@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from skimage.data import camera
-from acrawler import ACEnvironment, ACAgent, ACSimulation
+from ..acrawler import ACEnvironment, ACAgent, ACSimulation
 
 
 class ACEnvironmentTest(unittest.TestCase):
