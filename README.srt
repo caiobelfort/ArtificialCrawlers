@@ -1,0 +1,3 @@
+A implementation of artificial life model described in Zhang, Duo, and Yan Qiu Chen. "Artificial life: a new approach to texture classification." International Journal of Pattern Recognition and Artificial Intelligence 19.03 (2005): 355-374.
+
+Dependencies: numpy
