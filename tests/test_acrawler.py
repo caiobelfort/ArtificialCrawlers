@@ -7,6 +7,7 @@ from ..acrawler import ACEnvironment, ACAgent, ACSimulation
 class ACEnvironmentTest(unittest.TestCase):
     def setUp(self):
         pass
+
     def tearDown(self):
         pass
 
@@ -15,13 +16,12 @@ class ACEnvironmentTest(unittest.TestCase):
         sample_arr = np.arange(25).reshape(5, 5)
         env = ACEnvironment(sample_arr)
 
-        #Test values
+        # Test values
         self.assertTrue(np.array_equal(sample_arr, env.values))
 
-        #Test agent_models map
+        # Test agent_models map
         expected = np.zeros((5, 5), dtype=bool)
         self.assertTrue(np.array_equiv(expected, env.population))
-
 
     def test_can_be_initialized_from_matrix_and_mask(self):
         sample_arr = np.arange(9).reshape(3, 3)
@@ -80,7 +80,6 @@ class ACEnvironmentTest(unittest.TestCase):
         env = ACEnvironment(arr, map)
         energy_map = env.get_energy_map()
         self.assertTrue(np.array_equal(map * 5, energy_map))
-
 
 
 class ACAgentTest(unittest.TestCase):
