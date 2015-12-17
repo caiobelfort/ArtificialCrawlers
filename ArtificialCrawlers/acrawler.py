@@ -1,4 +1,4 @@
-__author__ = 'caiob'
+__author__ = 'Caio Belfort'
 
 import numpy as np
 
@@ -128,7 +128,7 @@ class ACAgent:
         return True
 
     def absorb(self):
-        self.energy_ += self.absorption_rate_ * self.environment_.values[self.position_]
+        self.energy_ += int(self.absorption_rate_ * self.environment_.values[self.position_])
         if self.energy_ > self.max_energy_:
             self.energy_ = self.max_energy_
 
